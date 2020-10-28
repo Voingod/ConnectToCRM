@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using ConnectToCRM.Controllers;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace ConnectToCRM.Helpers
             return result.AccessToken;
         }
 
-        public async Task<HttpResponseMessage> CrmRequest(HttpMethod httpMethod, string requestUri, string clientId,
+        private async Task<HttpResponseMessage> CrmRequest(HttpMethod httpMethod, string requestUri, string clientId,
                                                                  string clientSecret, string tenantID, string body = null)
         {
             // Acquiring Access Token  
@@ -28,10 +29,10 @@ namespace ConnectToCRM.Helpers
             var client = new HttpClient();
             var message = new HttpRequestMessage(httpMethod, requestUri);
 
-            // OData related headers  
-            message.Headers.Add("OData-MaxVersion", "4.0");
-            message.Headers.Add("OData-Version", "4.0");
-            message.Headers.Add("Prefer", "odata.include-annotations=\"*\"");
+            //// OData related headers  
+            //message.Headers.Add("OData-MaxVersion", "4.0");
+            //message.Headers.Add("OData-Version", "4.0");
+            //message.Headers.Add("Prefer", "odata.include-annotations=\"*\"");
 
             // Passing AccessToken in Authentication header  
             message.Headers.Add("Authorization", $"Bearer {accessToken}");
@@ -41,6 +42,18 @@ namespace ConnectToCRM.Helpers
                 message.Content = new StringContent(body, Encoding.UTF8, "application/json");
 
             return await client.SendAsync(message);
+        }
+
+        public string CrmRequestWithParametr(string entity)
+        {           
+            var accounts = CrmRequest(
+                httpMethod: HttpMethod.Get,
+                ParametrsToConnect.crmUrl + entity,
+                ParametrsToConnect.clientId,
+                ParametrsToConnect.clientSecret,
+                ParametrsToConnect.tenantID)
+                .Result.Content.ReadAsStringAsync();
+            return accounts.Result;
         }
     }
 }
