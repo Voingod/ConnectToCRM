@@ -44,16 +44,15 @@ namespace ConnectToCRM.Helpers
             return await client.SendAsync(message);
         }
 
-        public string CrmRequestWithParametr(string entity)
+        public async Task<string> CrmRequestWithParametr(string entity)
         {           
-            var accounts = CrmRequest(
+            var accounts = await CrmRequest(
                 httpMethod: HttpMethod.Get,
                 ParametrsToConnect.crmUrl + entity,
                 ParametrsToConnect.clientId,
                 ParametrsToConnect.clientSecret,
-                ParametrsToConnect.tenantID)
-                .Result.Content.ReadAsStringAsync();
-            return accounts.Result;
+                ParametrsToConnect.tenantID);
+            return await accounts.Content.ReadAsStringAsync();
         }
     }
 }

@@ -13,12 +13,11 @@ namespace ConnectToCRM.Controllers
     [Route("[controller]")]
     public class OpportunitiesController : ControllerBase
     {
-
         [HttpGet]
-        public string Get()
+        public async Task<string> Get()
         {
             CrmConnection crmConnection = new CrmConnection();
-            return crmConnection.CrmRequestWithParametr("opportunities");
+            return await crmConnection.CrmRequestWithParametr("opportunities");
         }
     }
 }

@@ -15,10 +15,10 @@ namespace ConnectToCRM.Controllers
     {
 
         [HttpGet]
-        public string Get()
+        public async Task<string> Get()
         {
             CrmConnection crmConnection = new CrmConnection();
-            return crmConnection.CrmRequestWithParametr("accounts");
+            return await crmConnection.CrmRequestWithParametr("accounts");
         }
     }
 }
