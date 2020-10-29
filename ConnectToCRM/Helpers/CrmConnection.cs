@@ -1,7 +1,9 @@
 ﻿using ConnectToCRM.Controllers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -11,6 +13,15 @@ namespace ConnectToCRM.Helpers
 {
     public class CrmConnection
     {
+
+        private readonly IConfiguration _config;
+
+        public CrmConnection(IConfiguration config)
+        {
+            _config = config;
+        }
+
+
         private async Task<string> AccessTokenGenerator(string clientId, string clientSecret, string tenantID, string requestUri)
         {
             string authority = "https://login.microsoftonline.com/" + tenantID;
@@ -45,13 +56,18 @@ namespace ConnectToCRM.Helpers
         }
 
         public async Task<string> CrmRequestWithParametr(string entity)
-        {           
-            var accounts = await CrmRequest(
+        {
+            string crmUrl = _config.GetValue<string>("crmUrl");
+            string clientId = _config.GetValue<string>("clientId");
+            string clientSecret = _config.GetValue<string>("clientSecret");
+            string tenantID = _config.GetValue<string>("tenantID");
+
+            HttpResponseMessage accounts = await CrmRequest(
                 httpMethod: HttpMethod.Get,
-                ParametrsToConnect.crmUrl + entity,
-                ParametrsToConnect.clientId,
-                ParametrsToConnect.clientSecret,
-                ParametrsToConnect.tenantID);
+                crmUrl + entity,
+                clientId,
+                clientSecret,
+                tenantID);
             return await accounts.Content.ReadAsStringAsync();
         }
     }
