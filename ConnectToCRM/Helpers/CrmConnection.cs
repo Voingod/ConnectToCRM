@@ -1,11 +1,14 @@
 ﻿using ConnectToCRM.Controllers;
+using ConnectToCRM.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,5 +75,25 @@ namespace ConnectToCRM.Helpers
 
             return await responseMessage.Content.ReadAsStringAsync();
         }
+
+
+        public async Task<HttpStatusCode> CrmRequestToCreatePost<T>(string entity, T content)
+        {
+            string crmUrl = _config.GetValue<string>("crmUrl");
+            string clientId = _config.GetValue<string>("clientId");
+            string clientSecret = _config.GetValue<string>("clientSecret");
+            string tenantID = _config.GetValue<string>("tenantID");
+
+            HttpResponseMessage responseMessage = await CrmRequest(
+                httpMethod: HttpMethod.Post,
+                crmUrl + entity,
+                clientId,
+                clientSecret,
+                tenantID,
+                JsonConvert.SerializeObject(content));
+
+            return responseMessage.StatusCode;
+        }
+
     }
 }

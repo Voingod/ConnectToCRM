@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json.Serialization;
@@ -35,6 +36,14 @@ namespace ConnectToCRM.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost]
+        public async void Post(ContactsModel model)
+        {
+            CrmConnection crmConnection = new CrmConnection(_config);
+            await crmConnection.CrmRequestToCreatePost("contacts", model);
+        }
+
     }
 
 
