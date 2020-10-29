@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ConnectToCRM.Helpers;
+using ConnectToCRM.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ConnectToCRM.Controllers
 {
@@ -22,10 +26,15 @@ namespace ConnectToCRM.Controllers
         }
 
         [HttpGet]
-        public async Task<string> Get()
+        [Produces("application/json")]
+        public async Task<IActionResult> Get()
         {
             CrmConnection crmConnection = new CrmConnection(_config);
-            return await crmConnection.CrmRequestWithParametr("contacts");
+            var contacts = await crmConnection.CrmRequestWithParametr("contacts");
+            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
+            return Ok(result);
         }
     }
+
+
 }

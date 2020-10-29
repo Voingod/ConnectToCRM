@@ -1,6 +1,7 @@
 ﻿using ConnectToCRM.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,13 +63,14 @@ namespace ConnectToCRM.Helpers
             string clientSecret = _config.GetValue<string>("clientSecret");
             string tenantID = _config.GetValue<string>("tenantID");
 
-            HttpResponseMessage accounts = await CrmRequest(
+            HttpResponseMessage responseMessage = await CrmRequest(
                 httpMethod: HttpMethod.Get,
                 crmUrl + entity,
                 clientId,
                 clientSecret,
                 tenantID);
-            return await accounts.Content.ReadAsStringAsync();
+
+            return await responseMessage.Content.ReadAsStringAsync();
         }
     }
 }
