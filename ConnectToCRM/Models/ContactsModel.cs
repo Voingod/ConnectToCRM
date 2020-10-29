@@ -11,23 +11,35 @@ namespace ConnectToCRM.Models
     {
         [JsonPropertyName("customertypecode")]
         public int CustomerTypeCode { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Address1Addressid { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Address2Addressid { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Address3Addressid { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Contactid { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Createdon { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Firstname { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public string Lastname { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public int Statecode { get; set; }
-        //[JsonPropertyName("customertypecode")]
-        //public int Statuscode { get; set; }
+
+        [JsonPropertyName("address1_addressid")]
+        public string Address1AddressId { get; set; }
+
+        [JsonPropertyName("address2_addressid")]
+        public string Address2AddressId { get; set; }
+
+        [JsonPropertyName("address3_addressid")]
+        public string Address3AddressId { get; set; }
+
+        [JsonPropertyName("contactid")]
+        public string ContactId { get; set; }
+
+        [JsonPropertyName("createdon")]
+        public string CreatedOn { get; set; }
+
+        [JsonPropertyName("firstname")]
+        public string FirstName { get; set; }
+
+        [JsonPropertyName("lastname")]
+        public string LastName { get; set; }
+
+        [JsonPropertyName("statecode")]
+        public int StateCode { get; set; }
+
+        [JsonPropertyName("statuscode")]
+        public int StatusCode { get; set; }
+
+        [JsonPropertyName("emailaddress1")]
+        public string EmailAddress { get; set; }
     }
 }

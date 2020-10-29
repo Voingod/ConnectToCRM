@@ -32,6 +32,7 @@ namespace ConnectToCRM.Controllers
             CrmConnection crmConnection = new CrmConnection(_config);
             var contacts = await crmConnection.CrmRequestWithParametr("contacts");
             var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
+
             return Ok(result);
         }
     }
