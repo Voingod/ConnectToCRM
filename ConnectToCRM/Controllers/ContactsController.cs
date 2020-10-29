@@ -20,9 +20,11 @@ namespace ConnectToCRM.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly Test _test;
 
-        public ContactsController(IConfiguration config)
+        public ContactsController(IConfiguration config, Test test)
         {
+            _test = test;
             _config = config;
         }
 
@@ -30,11 +32,12 @@ namespace ConnectToCRM.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Get()
         {
-            CrmConnection crmConnection = new CrmConnection(_config);
-            var contacts = await crmConnection.CrmRequestWithParametr("contacts");
-            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
+            var tt = await _test.Get();
+            //CrmConnection crmConnection = new CrmConnection(_config);
+            //var contacts = await crmConnection.CrmRequestWithParametr("contacts");
+            //var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
 
-            return Ok(result);
+            return Ok(tt);
         }
 
         [HttpPost]
@@ -44,6 +47,24 @@ namespace ConnectToCRM.Controllers
             await crmConnection.CrmRequestToCreatePost("contacts", model);
         }
 
+    }
+    public class Test
+    {
+        private readonly IConfiguration _config;
+
+        public Test(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public async Task<DynamicsEntityCollection<ContactsModel>> Get()
+        {
+            CrmConnection crmConnection = new CrmConnection(_config);
+            var contacts = await crmConnection.CrmRequestWithParametr("contacts");
+            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
+
+            return result;
+        }
     }
 
 
