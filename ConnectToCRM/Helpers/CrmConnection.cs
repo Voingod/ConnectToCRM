@@ -1,6 +1,7 @@
 ﻿using ConnectToCRM.Controllers;
 using ConnectToCRM.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,14 +18,12 @@ namespace ConnectToCRM.Helpers
 {
     public class CrmConnection
     {
+        private readonly CrmConfiguration _crmConfiguration;
 
-        private readonly IConfiguration _config;
-
-        public CrmConnection(IConfiguration config)
+        public CrmConnection(CrmConfiguration crmConfiguration)
         {
-            _config = config;
+            _crmConfiguration = crmConfiguration;
         }
-
 
         private async Task<string> AccessTokenGenerator(string clientId, string clientSecret, string tenantID, string requestUri)
         {
@@ -37,16 +36,12 @@ namespace ConnectToCRM.Helpers
 
         public async Task<HttpResponseMessage> CrmRequest<T>(HttpMethod httpMethod, string entityName, T body = null) where T : class
         {
-            string crmUrl = _config.GetValue<string>("crmUrl");
-            string clientId = _config.GetValue<string>("clientId");
-            string clientSecret = _config.GetValue<string>("clientSecret");
-            string tenantID = _config.GetValue<string>("tenantID");
-
             // Acquiring Access Token  
-            var accessToken = await AccessTokenGenerator(clientId, clientSecret, tenantID, crmUrl);
+            var accessToken = await AccessTokenGenerator(_crmConfiguration.ClientId, _crmConfiguration.ClientSecret, 
+                                                         _crmConfiguration.TenantID, _crmConfiguration.CrmUrl);
 
             var client = new HttpClient();
-            var message = new HttpRequestMessage(httpMethod, crmUrl + entityName);
+            var message = new HttpRequestMessage(httpMethod, _crmConfiguration.CrmUrl + entityName);
 
             // Passing AccessToken in Authentication header  
             message.Headers.Add("Authorization", $"Bearer {accessToken}");

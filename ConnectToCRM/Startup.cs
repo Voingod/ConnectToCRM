@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ConnectToCRM.Controllers;
+using ConnectToCRM.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +29,7 @@ namespace ConnectToCRM
         {
             services.AddControllers();
             services.AddTransient<CrmService>();
+            services.Configure<CrmConfiguration>(Configuration.GetSection("CrmConfiguration"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
