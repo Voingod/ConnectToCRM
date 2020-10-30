@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ConnectToCRM.Services
@@ -21,7 +22,7 @@ namespace ConnectToCRM.Services
         private AuthenticationResult accessToken;
         public async Task<AuthenticationResult> GenerateToken()
         {
-            if (accessToken == null)
+            if (accessToken == null|| accessToken.ExpiresOn <= DateTime.UtcNow)
             {
                 accessToken = await AccessTokenGenerator(_crmConfiguration.ClientId, _crmConfiguration.ClientSecret,
                                              _crmConfiguration.TenantID, _crmConfiguration.CrmUrl);
