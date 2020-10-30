@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ConnectToCRM.Controllers;
 using ConnectToCRM.Helpers;
+using ConnectToCRM.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,6 +30,7 @@ namespace ConnectToCRM
         {
             services.AddControllers();
             services.AddTransient<CrmService>();
+            services.AddSingleton<TokenService>();
             services.Configure<CrmConfiguration>(Configuration.GetSection("CrmConfiguration"));
         }
 

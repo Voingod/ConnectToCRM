@@ -18,18 +18,18 @@ namespace ConnectToCRM.Controllers
     [Route("[controller]")]
     public class ContactsController : ControllerBase
     {
-        private readonly CrmService _test;
+        private readonly CrmService _contact;
 
-        public ContactsController(CrmService test)
+        public ContactsController(CrmService contact)
         {
-            _test = test;
+            _contact = contact;
         }
 
         [HttpGet]
         [Produces("application/json")]
         public async Task<IActionResult> Get(int page = 1, int pageSize = 3)
         {
-            var contacts = await _test.Request<ContactsModel>(HttpMethod.Get,"contacts");
+            var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get,"contacts");
             var someContacts = contacts.Value.Skip((page - 1) * pageSize).Take(pageSize);
             return Ok(someContacts);
         }
@@ -38,14 +38,14 @@ namespace ConnectToCRM.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Get([FromQuery] string firstName)
         {
-            var contacts = await _test.Request<ContactsModel>(HttpMethod.Get,"contacts");
+            var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get,"contacts");
             return Ok(contacts.Value.Where(c => c.FirstName == firstName));
         }
 
         [HttpPost]
         public async void Post(ContactsModel contactsModel)
         {
-            await _test.Request(HttpMethod.Post, "contacts", contactsModel);
+            await _contact.Request(HttpMethod.Post, "contacts", contactsModel);
         }
     }
 }
