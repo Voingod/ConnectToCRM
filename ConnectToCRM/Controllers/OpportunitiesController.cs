@@ -24,15 +24,15 @@ namespace ConnectToCRM.Controllers
         }
 
 
-        [HttpGet]
-        [Produces("application/json")]
-        public async Task<IActionResult> Get()
-        {
-            CrmConnection crmConnection = new CrmConnection(_config);
-            var opportunities = await crmConnection.CrmRequestWithParametr("opportunities");
-            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<AccountsModel>>(opportunities);
+        //[HttpGet]
+        //[Produces("application/json")]
+        //public async Task<IActionResult> Get()
+        //{
+        //    CrmConnection crmConnection = new CrmConnection(_config);
+        //    var opportunities = await crmConnection.CrmRequestWithParametr("opportunities");
+        //    var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<AccountsModel>>(opportunities);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
     }
 }

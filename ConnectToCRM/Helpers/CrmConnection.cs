@@ -35,64 +35,27 @@ namespace ConnectToCRM.Helpers
             return result.AccessToken;
         }
 
-        private async Task<HttpResponseMessage> CrmRequest(HttpMethod httpMethod, string requestUri, string clientId,
-                                                                 string clientSecret, string tenantID, string body = null)
+        public async Task<HttpResponseMessage> CrmRequest<T>(HttpMethod httpMethod, string entityName, T body = null) where T : class
         {
+            string crmUrl = _config.GetValue<string>("crmUrl");
+            string clientId = _config.GetValue<string>("clientId");
+            string clientSecret = _config.GetValue<string>("clientSecret");
+            string tenantID = _config.GetValue<string>("tenantID");
+
             // Acquiring Access Token  
-            var accessToken = await AccessTokenGenerator(clientId, clientSecret, tenantID, requestUri);
+            var accessToken = await AccessTokenGenerator(clientId, clientSecret, tenantID, crmUrl);
 
             var client = new HttpClient();
-            var message = new HttpRequestMessage(httpMethod, requestUri);
-
-            //// OData related headers  
-            //message.Headers.Add("OData-MaxVersion", "4.0");
-            //message.Headers.Add("OData-Version", "4.0");
-            //message.Headers.Add("Prefer", "odata.include-annotations=\"*\"");
+            var message = new HttpRequestMessage(httpMethod, crmUrl + entityName);
 
             // Passing AccessToken in Authentication header  
             message.Headers.Add("Authorization", $"Bearer {accessToken}");
 
             // Adding body content in HTTP request   
             if (body != null)
-                message.Content = new StringContent(body, Encoding.UTF8, "application/json");
+                message.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
 
             return await client.SendAsync(message);
-        }
-
-        public async Task<string> CrmRequestWithParametr(string entity)
-        {
-            string crmUrl = _config.GetValue<string>("crmUrl");
-            string clientId = _config.GetValue<string>("clientId");
-            string clientSecret = _config.GetValue<string>("clientSecret");
-            string tenantID = _config.GetValue<string>("tenantID");
-
-            HttpResponseMessage responseMessage = await CrmRequest(
-                httpMethod: HttpMethod.Get,
-                crmUrl + entity,
-                clientId,
-                clientSecret,
-                tenantID);
-
-            return await responseMessage.Content.ReadAsStringAsync();
-        }
-
-
-        public async Task<HttpStatusCode> CrmRequestToCreatePost<T>(string entity, T content)
-        {
-            string crmUrl = _config.GetValue<string>("crmUrl");
-            string clientId = _config.GetValue<string>("clientId");
-            string clientSecret = _config.GetValue<string>("clientSecret");
-            string tenantID = _config.GetValue<string>("tenantID");
-
-            HttpResponseMessage responseMessage = await CrmRequest(
-                httpMethod: HttpMethod.Post,
-                crmUrl + entity,
-                clientId,
-                clientSecret,
-                tenantID,
-                JsonConvert.SerializeObject(content));
-
-            return responseMessage.StatusCode;
         }
 
     }

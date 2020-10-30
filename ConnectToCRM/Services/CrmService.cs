@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ConnectToCRM.Helpers;
 using ConnectToCRM.Models;
@@ -16,19 +17,13 @@ namespace ConnectToCRM.Controllers
             _config = config;
         }
 
-        public async Task<DynamicsEntityCollection<ContactsModel>> GetAllRecords(string entityName)
+        public async Task<DynamicsEntityCollection<T>> Request<T>(HttpMethod httpMethod, string entityName, T body = null) where T : class
         {
             CrmConnection crmConnection = new CrmConnection(_config);
-            var contacts = await crmConnection.CrmRequestWithParametr(entityName);
-            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
+            var contacts = await crmConnection.CrmRequest(httpMethod, entityName, body);
+            var qwe = contacts.Content.ReadAsStringAsync().Result;
+            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<T>>(qwe);
             return result;
-        }
-
-        public async Task<HttpStatusCode> CreateRecord<T>(string entityName, T model)
-        {
-            CrmConnection crmConnection = new CrmConnection(_config);
-            var response = await crmConnection.CrmRequestToCreatePost(entityName, model);
-            return response;
         }
     }
 

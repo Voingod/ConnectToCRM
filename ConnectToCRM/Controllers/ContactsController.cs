@@ -27,7 +27,7 @@ namespace ConnectToCRM.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Get(int page = 1, int pageSize = 3)
         {
-            var contacts = await _test.GetAllRecords("contacts");
+            var contacts = await _test.Request<ContactsModel>(HttpMethod.Get,"contacts");
             var someContacts = contacts.Value.Skip((page - 1) * pageSize).Take(pageSize);
             return Ok(someContacts);
         }
@@ -36,14 +36,14 @@ namespace ConnectToCRM.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Get([FromQuery] string firstName)
         {
-            var contacts = await _test.GetAllRecords("contacts");
+            var contacts = await _test.Request<ContactsModel>(HttpMethod.Get,"contacts");
             return Ok(contacts.Value.Where(c => c.FirstName == firstName));
         }
 
         [HttpPost]
         public async void Post(ContactsModel contactsModel)
         {
-            await _test.CreateRecord("contacts", contactsModel);
+            await _test.Request(HttpMethod.Post, "contacts", contactsModel);
         }
     }
 }
