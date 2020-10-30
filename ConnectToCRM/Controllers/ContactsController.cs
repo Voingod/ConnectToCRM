@@ -5,12 +5,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using ConnectToCRM.Helpers;
 using ConnectToCRM.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ConnectToCRM.Controllers
@@ -19,53 +16,27 @@ namespace ConnectToCRM.Controllers
     [Route("[controller]")]
     public class ContactsController : ControllerBase
     {
-        private readonly IConfiguration _config;
-        private readonly Test _test;
+        private readonly CrmService _test;
 
-        public ContactsController(IConfiguration config, Test test)
+        public ContactsController(CrmService test)
         {
             _test = test;
-            _config = config;
         }
 
         [HttpGet]
         [Produces("application/json")]
         public async Task<IActionResult> Get()
         {
-            var tt = await _test.Get();
-            //CrmConnection crmConnection = new CrmConnection(_config);
-            //var contacts = await crmConnection.CrmRequestWithParametr("contacts");
-            //var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
-
-            return Ok(tt);
+            var contacts = await _test.GetAllRecords("contacts");
+            return Ok(contacts);
         }
 
         [HttpPost]
-        public async void Post(ContactsModel model)
-        {
-            CrmConnection crmConnection = new CrmConnection(_config);
-            await crmConnection.CrmRequestToCreatePost("contacts", model);
+        public async void Post(ContactsModel contactsModel)
+        {                
+            await _test.CreateRecord("contacts", contactsModel);
         }
 
     }
-    public class Test
-    {
-        private readonly IConfiguration _config;
-
-        public Test(IConfiguration config)
-        {
-            _config = config;
-        }
-
-        public async Task<DynamicsEntityCollection<ContactsModel>> Get()
-        {
-            CrmConnection crmConnection = new CrmConnection(_config);
-            var contacts = await crmConnection.CrmRequestWithParametr("contacts");
-            var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<ContactsModel>>(contacts);
-
-            return result;
-        }
-    }
-
 
 }
