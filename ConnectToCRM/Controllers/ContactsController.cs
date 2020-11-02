@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Web.Http.OData;
 using ConnectToCRM.Helpers;
 using ConnectToCRM.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -24,27 +25,31 @@ namespace ConnectToCRM.Controllers
         {
             _contact = contact;
         }
-
         [HttpGet]
         [Produces("application/json")]
-        public async Task<IActionResult> Get(int page = 1, int pageSize = 3)
+        public async Task<IActionResult> Get(string firstName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3, int top = 10)
         {
-            var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get,"contacts");
-            var someContacts = contacts.Value.Skip((page - 1) * pageSize).Take(pageSize);
-            return Ok(someContacts);
-        }
+            string url = !String.IsNullOrEmpty(firstName) ?
+                "contacts?$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
+                "contacts?$top=" + top + "&$orderby=" + sortOrder + " " + sortType;
 
-        [HttpGet("{filterByName}")]
-        [Produces("application/json")]
-        public async Task<IActionResult> Get([FromQuery] string firstName)
-        {
-            var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get,"contacts");
-            return Ok(contacts.Value.Where(c => c.FirstName == firstName));
+            //string url = "contacts";
+
+            var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get, url);
+            //var someContacts = contacts.Value.Skip((page - 1) * pageSize).Take(pageSize);
+            //SortModel sortTest = new SortModel();
+            //var sorted = sortTest.Sort(sortOrder, someContacts);
+            //if (!String.IsNullOrEmpty(firstName))
+            //{
+            //    return Ok(sorted.Where(n => n.FirstName == firstName));
+            //}
+            return Ok(contacts);
         }
 
         [HttpPost]
-        public async void Post(ContactsModel contactsModel)
+        public async void Post()
         {
+            ContactsModel contactsModel = new ContactsModel { FirstName = "Test", LastName = "November" };
             await _contact.Request(HttpMethod.Post, "contacts", contactsModel);
         }
     }

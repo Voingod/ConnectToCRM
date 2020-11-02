@@ -26,21 +26,23 @@ namespace ConnectToCRM.Controllers
         {
             var token = _tokenService.GenerateToken();
             var client = new HttpClient();
-            var message = new HttpRequestMessage(httpMethod, _crmConfiguration.CrmUrl + entityName);
+            var message = new HttpRequestMessage(httpMethod, _crmConfiguration.CrmUrl + entityName);//посмотреть методы
             // Passing AccessToken in Authentication header  
             message.Headers.Add("Authorization", $"Bearer {token.Result.AccessToken}");
-
+            message.Headers.Add("Prefer", "odata.maxpagesize=2");
+            message.Headers.Add("OData-MaxVersion", "4.0");
+            message.Headers.Add("OData-Version", "4.0");
+            //message.Headers.Add("Next", "odata.nextLink");
             // Adding body content in HTTP request   
             if (body != null)
                 message.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
-
+            
             var response = await client.SendAsync(message);
             var contacts = response.Content.ReadAsStringAsync().Result;
             var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<T>>(contacts);
-
+            //var result2 = JsonConvert.DeserializeObject<T>(contacts);
             return result;
         }
     }
-
 
 }
