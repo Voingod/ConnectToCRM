@@ -29,7 +29,7 @@ namespace ConnectToCRM.Controllers
             var message = new HttpRequestMessage(httpMethod, _crmConfiguration.CrmUrl + entityName);//посмотреть методы
             // Passing AccessToken in Authentication header  
             message.Headers.Add("Authorization", $"Bearer {token.Result.AccessToken}");
-            message.Headers.Add("Prefer", "odata.maxpagesize=2");
+            //message.Headers.Add("Prefer", "odata.maxpagesize=2");
             message.Headers.Add("OData-MaxVersion", "4.0");
             message.Headers.Add("OData-Version", "4.0");
             //message.Headers.Add("Next", "odata.nextLink");

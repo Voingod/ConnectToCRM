@@ -29,11 +29,19 @@ namespace ConnectToCRM.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Get(string firstName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3, int top = 10)
         {
-            string url = !String.IsNullOrEmpty(firstName) ?
-                "contacts?$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
-                "contacts?$top=" + top + "&$orderby=" + sortOrder + " " + sortType;
+            //string url = !String.IsNullOrEmpty(firstName) ?
+            //    "contacts?$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
+            //    "contacts?$top=" + top + "&$orderby=" + sortOrder + " " + sortType;
 
-            //string url = "contacts";
+            string fetchXml = @"<fetch count='2' page='1' >
+  < entity name = 'contact' >
+ 
+     < attribute name = 'firstname' />
+  
+    </ entity >
+  </ fetch > ";
+
+            string url = "contacts?fetchXml="+ fetchXml;
 
             var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get, url);
             //var someContacts = contacts.Value.Skip((page - 1) * pageSize).Take(pageSize);
