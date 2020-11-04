@@ -42,7 +42,7 @@ namespace ConnectToCRM.Models
         [JsonProperty(PropertyName = "emailaddress1")]
         public string EmailAddress { get; set; }
 
-        [JsonProperty(PropertyName = "@odata.nextLink")]
-        public string NextLink { get; set; }
+        //[JsonProperty(PropertyName = "@odata.nextLink")]
+        //public string NextLink { get; set; }
     }
 }

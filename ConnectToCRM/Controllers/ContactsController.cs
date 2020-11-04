@@ -27,30 +27,29 @@ namespace ConnectToCRM.Controllers
         }
         [HttpGet]
         [Produces("application/json")]
-        public async Task<IActionResult> Get(string firstName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3, int top = 10)
+        public async Task<IActionResult> Get(string firstName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3)
         {
-            //string url = !String.IsNullOrEmpty(firstName) ?
-            //    "contacts?$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
-            //    "contacts?$top=" + top + "&$orderby=" + sortOrder + " " + sortType;
+            string fetchXml = "<fetch mapping='logical' count='"+ pageSize + "' page='"+ page + "'>"+
+   "<entity name='contact'> "+
+      "<attribute name = 'contactid'/> "+
+      "<attribute name = 'firstname' /> "+
+      "<attribute name = 'lastname' /> "+
+      "<attribute name = 'customertypecode' /> "+
+      "<attribute name = 'address1_addressid' /> "+
+      "<attribute name = 'address2_addressid' /> "+
+      "<attribute name = 'address3_addressid' /> "+
+      "<attribute name = 'createdon' /> "+
+      "<attribute name = 'statecode' /> "+
+      "<attribute name = 'statuscode' /> "+
+      "<attribute name = 'emailaddress1' /> "+
+    "</entity> "+
+    "</fetch>";
 
-            string fetchXml = @"<fetch count='2' page='1' >
-  < entity name = 'contact' >
- 
-     < attribute name = 'firstname' />
-  
-    </ entity >
-  </ fetch > ";
-
-            string url = "contacts?fetchXml="+ fetchXml;
+            string url = !String.IsNullOrEmpty(firstName) ?
+    "contacts?fetchXml="+ fetchXml + "&$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
+    "contacts?fetchXml=" + fetchXml + "&$orderby=" + sortOrder + " " + sortType;
 
             var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get, url);
-            //var someContacts = contacts.Value.Skip((page - 1) * pageSize).Take(pageSize);
-            //SortModel sortTest = new SortModel();
-            //var sorted = sortTest.Sort(sortOrder, someContacts);
-            //if (!String.IsNullOrEmpty(firstName))
-            //{
-            //    return Ok(sorted.Where(n => n.FirstName == firstName));
-            //}
             return Ok(contacts);
         }
 

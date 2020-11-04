@@ -32,8 +32,7 @@ namespace ConnectToCRM.Controllers
             //message.Headers.Add("Prefer", "odata.maxpagesize=2");
             message.Headers.Add("OData-MaxVersion", "4.0");
             message.Headers.Add("OData-Version", "4.0");
-            //message.Headers.Add("Next", "odata.nextLink");
-            // Adding body content in HTTP request   
+
             if (body != null)
                 message.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
             
