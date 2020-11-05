@@ -29,14 +29,14 @@ namespace ConnectToCRM.Controllers
             string fetchXml = "<fetch mapping='logical' count='" + pageSize + "' page='" + page + "'>" +
    "<entity name='incident'> " +
       "<attribute name = 'createdon'/> " +
-      "<attribute name = 'name' /> " +
-      "<attribute name = 'incidentnumber' /> " +
-      "<attribute name = 'telephone1' /> " +
+      "<attribute name = 'title' /> " +
+      "<attribute name = 'ticketnumber' /> " +
+      "<attribute name = 'caseorigincode' /> " +
     "</entity> " +
     "</fetch>";
 
             string url = !String.IsNullOrEmpty(incidentName) ?
-    "incidents?fetchXml=" + fetchXml + "&$filter=contains(name,'" + incidentName + "')&$orderby= " + sortOrder + " " + sortType :
+    "incidents?fetchXml=" + fetchXml + "&$filter=contains(title,'" + incidentName + "')&$orderby= " + sortOrder + " " + sortType :
     "incidents?fetchXml=" + fetchXml + "&$orderby=" + sortOrder + " " + sortType;
 
             var incidents = await _incident.Request<IncidentsModel>(HttpMethod.Get, url);

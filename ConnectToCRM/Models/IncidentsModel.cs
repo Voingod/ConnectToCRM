@@ -12,15 +12,13 @@ namespace ConnectToCRM.Models
         [JsonProperty(PropertyName = "createdon")]
         public string CreatedOn { get; set; }
         
-        [JsonProperty(PropertyName = "createdon")]
+        [JsonProperty(PropertyName = "title")]
         public string CaseTitle { get; set; }
         
-        [JsonProperty(PropertyName = "createdon")]
+        [JsonProperty(PropertyName = "ticketnumber")]
         public string ID { get; set; }
         
-        [JsonProperty(PropertyName = "createdon")]
+        [JsonProperty(PropertyName = "caseorigincode")]
         public string Origin { get; set; }
-    
-    
     }
 }

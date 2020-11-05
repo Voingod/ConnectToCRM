@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -8,7 +9,16 @@ namespace ConnectToCRM.Models
 {
     public class OpportunitiesModel
     {
-        [JsonPropertyName("createdon")]
+        [JsonProperty(PropertyName = "createdon")]
         public string CreatedOn { get; set; }
+        
+        [JsonProperty(PropertyName = "name")]
+        public string Topic { get; set; }
+        
+        [JsonProperty(PropertyName = "purchaseprocess")]
+        public string PurchaseProcess { get; set; }
+        
+        [JsonProperty(PropertyName = "msdyn_forecastcategory")]
+        public string ForecastCategory { get; set; }
     }
 }
