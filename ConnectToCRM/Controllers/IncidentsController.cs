@@ -16,22 +16,37 @@ namespace ConnectToCRM.Controllers
     [Route("[controller]")]
     public class IncidentsController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly CrmService _incident;
 
-        public IncidentsController(IConfiguration config)
+        public IncidentsController(CrmService incident)
         {
-            _config = config;
+            _incident = incident;
+        }
+        [HttpGet]
+        [Produces("application/json")]
+        public async Task<IActionResult> Get(string incidentName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3)
+        {
+            string fetchXml = "<fetch mapping='logical' count='" + pageSize + "' page='" + page + "'>" +
+   "<entity name='incident'> " +
+      "<attribute name = 'createdon'/> " +
+      "<attribute name = 'name' /> " +
+      "<attribute name = 'incidentnumber' /> " +
+      "<attribute name = 'telephone1' /> " +
+    "</entity> " +
+    "</fetch>";
+
+            string url = !String.IsNullOrEmpty(incidentName) ?
+    "incidents?fetchXml=" + fetchXml + "&$filter=contains(name,'" + incidentName + "')&$orderby= " + sortOrder + " " + sortType :
+    "incidents?fetchXml=" + fetchXml + "&$orderby=" + sortOrder + " " + sortType;
+
+            var incidents = await _incident.Request<IncidentsModel>(HttpMethod.Get, url);
+            return Ok(incidents);
         }
 
-        //[HttpGet]
-        //[Produces("application/json")]
-        //public async Task<IActionResult> Get()
-        //{
-        //    CrmConnection crmConnection = new CrmConnection(_config);
-        //    var incidents = await crmConnection.CrmRequestWithParametr("incidents");
-        //    var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<IncidentsModel>>(incidents);
-
-        //    return Ok(result);
-        //}
+        [HttpPost]
+        public async void Post(IncidentsModel incidentsModel)
+        {
+            await _incident.Request(HttpMethod.Post, "incidents", incidentsModel);
+        }
     }
 }

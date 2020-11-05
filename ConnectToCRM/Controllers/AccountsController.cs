@@ -16,22 +16,37 @@ namespace ConnectToCRM.Controllers
     [Route("[controller]")]
     public class AccountsController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly CrmService _account;
 
-        public AccountsController(IConfiguration config)
+        public AccountsController(CrmService account)
         {
-            _config = config;
+            _account = account;
+        }
+        [HttpGet]
+        [Produces("application/json")]
+        public async Task<IActionResult> Get(string accountName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3)
+        {
+            string fetchXml = "<fetch mapping='logical' count='" + pageSize + "' page='" + page + "'>" +
+   "<entity name='account'> " +
+      "<attribute name = 'createdon'/> " +
+      "<attribute name = 'name' /> " +
+      "<attribute name = 'accountnumber' /> " +
+      "<attribute name = 'telephone1' /> " +
+    "</entity> " +
+    "</fetch>";
+
+            string url = !String.IsNullOrEmpty(accountName) ?
+    "accounts?fetchXml=" + fetchXml + "&$filter=contains(name,'" + accountName + "')&$orderby= " + sortOrder + " " + sortType :
+    "accounts?fetchXml=" + fetchXml + "&$orderby=" + sortOrder + " " + sortType;
+
+            var accounts = await _account.Request<AccountsModel>(HttpMethod.Get, url);
+            return Ok(accounts);
         }
 
-        //[HttpGet]
-        //[Produces("application/json")]
-        //public async Task<IActionResult> Get()
-        //{
-        //    CrmConnection crmConnection = new CrmConnection(_config);
-        //    var accounts = await crmConnection.CrmRequestWithParametr("accounts");
-        //    var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<AccountsModel>>(accounts);
-
-        //    return Ok(result);
-        //}
+        [HttpPost]
+        public async void Post(AccountsModel accountsModel)
+        {
+            await _account.Request(HttpMethod.Post, "accounts", accountsModel);
+        }
     }
 }

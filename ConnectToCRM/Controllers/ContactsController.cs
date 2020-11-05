@@ -54,9 +54,8 @@ namespace ConnectToCRM.Controllers
         }
 
         [HttpPost]
-        public async void Post()
+        public async void Post(ContactsModel contactsModel)
         {
-            ContactsModel contactsModel = new ContactsModel { FirstName = "Test", LastName = "November" };
             await _contact.Request(HttpMethod.Post, "contacts", contactsModel);
         }
     }

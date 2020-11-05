@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -8,7 +9,18 @@ namespace ConnectToCRM.Models
 {
     public class IncidentsModel
     {
-        [JsonPropertyName("createdon")]
+        [JsonProperty(PropertyName = "createdon")]
         public string CreatedOn { get; set; }
+        
+        [JsonProperty(PropertyName = "createdon")]
+        public string CaseTitle { get; set; }
+        
+        [JsonProperty(PropertyName = "createdon")]
+        public string ID { get; set; }
+        
+        [JsonProperty(PropertyName = "createdon")]
+        public string Origin { get; set; }
+    
+    
     }
 }
