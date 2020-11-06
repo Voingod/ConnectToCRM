@@ -56,7 +56,15 @@ namespace ConnectToCRM.Controllers
         [HttpPost]
         public async void Post(ContactsModel contactsModel)
         {
+            contactsModel.SetDefaultPropertyAsync();
             await _contact.Request(HttpMethod.Post, "contacts", contactsModel);
         }
+        
+        [HttpPatch]
+        public async void Patch(string firstName, string lastName)
+        {
+            await _contact.Request<ContactsModel>(HttpMethod.Patch, "contacts(81c7b9ad-f30d-eb11-a813-000d3a666701)");
+        }
+
     }
 }

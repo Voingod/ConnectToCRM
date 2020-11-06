@@ -10,11 +10,28 @@ namespace ConnectToCRM.Models
 
     public class ContactsModel
     {
+        private void SetDefaultProperty()
+        {
+            CustomerTypeCode = 1;
+            StateCode = 0;
+            StatusCode = 1;
+            ContactId = Guid.NewGuid().ToString();
+            Address1AddressId = Guid.NewGuid().ToString();
+            Address2AddressId = Guid.NewGuid().ToString();
+            Address3AddressId = Guid.NewGuid().ToString();
+            if (EmailAddress == null)
+            {
+                EmailAddress = "";
+            }
+        }
+        public async void SetDefaultPropertyAsync() => await Task.Run(() => SetDefaultProperty());
+
         [JsonProperty(PropertyName = "firstname")]
         public string FirstName { get; set; }
 
         [JsonProperty(PropertyName = "lastname")]
         public string LastName { get; set; }
+
         [JsonProperty(PropertyName = "customertypecode")]
         public int CustomerTypeCode { get; set; }
 
@@ -44,5 +61,6 @@ namespace ConnectToCRM.Models
 
         //[JsonProperty(PropertyName = "@odata.nextLink")]
         //public string NextLink { get; set; }
+
     }
 }

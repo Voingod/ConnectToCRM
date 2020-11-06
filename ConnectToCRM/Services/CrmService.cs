@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,11 +38,17 @@ namespace ConnectToCRM.Controllers
                 message.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
             
             var response = await client.SendAsync(message);
+            //if (httpMethod == HttpMethod.Post)
+            //{
+
+            //var entityUri = response.Headers.GetValues("OData-EntityId").FirstOrDefault();
+            //}
             var contacts = response.Content.ReadAsStringAsync().Result;
             var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<T>>(contacts);
             //var result2 = JsonConvert.DeserializeObject<T>(contacts);
             return result;
         }
     }
-
 }
+
+
