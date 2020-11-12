@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -24,6 +25,21 @@ namespace ConnectToCRM.Models
                 EmailAddress = "";
             }
         }
+        public void CheckProperies(ContactsModel contactsModel)
+        {
+            contactsModel.Address1AddressId = contactsModel.Address1AddressId == null ? Address1AddressId : contactsModel.Address1AddressId;
+            contactsModel.Address2AddressId = contactsModel.Address2AddressId == null ? Address2AddressId : contactsModel.Address2AddressId;
+            contactsModel.Address3AddressId = contactsModel.Address3AddressId == null ? Address3AddressId : contactsModel.Address3AddressId;
+            contactsModel.ContactId = contactsModel.ContactId == null ? ContactId : contactsModel.ContactId;
+            contactsModel.CreatedOn = contactsModel.CreatedOn == null ? CreatedOn : contactsModel.CreatedOn;
+            contactsModel.CustomerTypeCode = contactsModel.CustomerTypeCode == 0 ? CustomerTypeCode : contactsModel.CustomerTypeCode;
+            contactsModel.EmailAddress = contactsModel.EmailAddress == null ? EmailAddress : contactsModel.EmailAddress;
+            contactsModel.FirstName = contactsModel.FirstName == null ? FirstName : contactsModel.FirstName;
+            contactsModel.LastName = contactsModel.LastName == null ? LastName : contactsModel.LastName;
+            contactsModel.StateCode = contactsModel.StateCode == 1 ? StateCode : contactsModel.StateCode;
+            contactsModel.StatusCode = contactsModel.StatusCode == 0 ? StatusCode : contactsModel.StatusCode;
+        }
+
         public async void SetDefaultPropertyAsync() => await Task.Run(() => SetDefaultProperty());
 
         [JsonProperty(PropertyName = "firstname")]

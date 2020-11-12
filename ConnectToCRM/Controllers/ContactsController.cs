@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http.OData;
 using ConnectToCRM.Helpers;
 using ConnectToCRM.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -29,24 +30,24 @@ namespace ConnectToCRM.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Get(string firstName, string sortOrder = "createdon", string sortType = "asc", int page = 1, int pageSize = 3)
         {
-            string fetchXml = "<fetch mapping='logical' count='"+ pageSize + "' page='"+ page + "'>"+
-   "<entity name='contact'> "+
-      "<attribute name = 'contactid'/> "+
-      "<attribute name = 'firstname' /> "+
-      "<attribute name = 'lastname' /> "+
-      "<attribute name = 'customertypecode' /> "+
-      "<attribute name = 'address1_addressid' /> "+
-      "<attribute name = 'address2_addressid' /> "+
-      "<attribute name = 'address3_addressid' /> "+
-      "<attribute name = 'createdon' /> "+
-      "<attribute name = 'statecode' /> "+
-      "<attribute name = 'statuscode' /> "+
-      "<attribute name = 'emailaddress1' /> "+
-    "</entity> "+
+            string fetchXml = "<fetch mapping='logical' count='" + pageSize + "' page='" + page + "'>" +
+   "<entity name='contact'> " +
+      "<attribute name = 'contactid'/> " +
+      "<attribute name = 'firstname' /> " +
+      "<attribute name = 'lastname' /> " +
+      "<attribute name = 'customertypecode' /> " +
+      "<attribute name = 'address1_addressid' /> " +
+      "<attribute name = 'address2_addressid' /> " +
+      "<attribute name = 'address3_addressid' /> " +
+      "<attribute name = 'createdon' /> " +
+      "<attribute name = 'statecode' /> " +
+      "<attribute name = 'statuscode' /> " +
+      "<attribute name = 'emailaddress1' /> " +
+    "</entity> " +
     "</fetch>";
 
             string url = !String.IsNullOrEmpty(firstName) ?
-    "contacts?fetchXml="+ fetchXml + "&$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
+    "contacts?fetchXml=" + fetchXml + "&$filter=contains(firstname,'" + firstName + "')&$orderby= " + sortOrder + " " + sortType :
     "contacts?fetchXml=" + fetchXml + "&$orderby=" + sortOrder + " " + sortType;
 
             var contacts = await _contact.Request<ContactsModel>(HttpMethod.Get, url);
@@ -59,11 +60,43 @@ namespace ConnectToCRM.Controllers
             contactsModel.SetDefaultPropertyAsync();
             await _contact.Request(HttpMethod.Post, "contacts", contactsModel);
         }
-        
+
         [HttpPatch]
-        public async void Patch(string firstName, string lastName)
+        public async void Patch(ContactsModel contactsModel)
         {
-            await _contact.Request<ContactsModel>(HttpMethod.Patch, "contacts(81c7b9ad-f30d-eb11-a813-000d3a666701)");
+            string fetchXml = "<fetch mapping='logical'>" +
+                "<entity name='contact'> " +
+                "<attribute name = 'contactid'/> " +
+                "<attribute name = 'firstname' /> " +
+                "<attribute name = 'lastname' /> " +
+                "<attribute name = 'customertypecode' /> " +
+                "<attribute name = 'address1_addressid' /> " +
+                "<attribute name = 'address2_addressid' /> " +
+                "<attribute name = 'address3_addressid' /> " +
+                "<attribute name = 'createdon' /> " +
+                "<attribute name = 'statecode' /> " +
+                "<attribute name = 'statuscode' /> " +
+                "<attribute name = 'emailaddress1' /> " +
+                "<filter type = 'and' >" +
+                "<condition attribute = 'contactid' operator= 'eq' value = '" + contactsModel.ContactId + "'/> " +
+                 "</filter > " +
+                 "</entity> " +
+                "</fetch>";
+
+            var response = await _contact.Request<ContactsModel>(HttpMethod.Get, "contacts?fetchXml=" + fetchXml);
+            if (response.Value.Count == 0)
+            {
+                return;
+            }
+            var contact = response.Value.FirstOrDefault();
+
+
+            if (contactsModel.FirstName != null)
+            {
+
+            }
+
+            await _contact.Request<ContactsModel>(HttpMethod.Patch, "contacts(" + contactsModel.ContactId + ")", contact);
         }
 
     }

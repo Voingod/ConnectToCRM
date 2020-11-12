@@ -22,7 +22,6 @@ namespace ConnectToCRM.Controllers
             _crmConfiguration = crmConfiguration.Value;
             _tokenService = tokenService;
         }
-
         public async Task<DynamicsEntityCollection<T>> Request<T>(HttpMethod httpMethod, string entityName, T body = null) where T : class
         {
             var token = _tokenService.GenerateToken();
@@ -36,13 +35,8 @@ namespace ConnectToCRM.Controllers
 
             if (body != null)
                 message.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
-            
-            var response = await client.SendAsync(message);
-            //if (httpMethod == HttpMethod.Post)
-            //{
 
-            //var entityUri = response.Headers.GetValues("OData-EntityId").FirstOrDefault();
-            //}
+            var response = await client.SendAsync(message);
             var contacts = response.Content.ReadAsStringAsync().Result;
             var result = JsonConvert.DeserializeObject<DynamicsEntityCollection<T>>(contacts);
             //var result2 = JsonConvert.DeserializeObject<T>(contacts);
